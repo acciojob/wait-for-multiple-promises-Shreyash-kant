@@ -1,7 +1,6 @@
 //your JS code here. If required.
 //your JS code here. If required.
 const table = document.getElementById("output");
-table.innerHTML += "<tr><td colspan=2>Loading...</td></tr>";
 const startTime = performance.now();
 function createPromise(label) {
   return new Promise((res) => {
