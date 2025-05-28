@@ -1,28 +1,39 @@
-//your JS code here. If required.
-//your JS code here. If required.
 const table = document.getElementById("output");
-const startTime = performance.now();
-function createPromise(label) {
-  return new Promise((res) => {
-    const delay = Math.random() * 2000 + 1000;
-    setTimeout(() => {
-      const timeTaken = (performance.now() - startTime) / 1000;
-      res({ label, timeTaken: parseFloat(timeTaken) });
-    }, delay);
+
+function createPromise(promiseName) {
+  return new Promise((resolve) => {
+    const startTime = performance.now();
+    const delay = Math.floor(Math.random() * 3000 + 1000);
+    setTimeout(
+      () =>
+        resolve({
+          promiseName,
+          timeTaken: ((performance.now() - startTime) / 1000).toFixed(3),
+        }),
+      delay
+    );
   });
 }
+function totalTime(data) {
+  const times = data.map(({ timeTaken }) => {
+    return parseFloat(timeTaken).toFixed(3);
+  });
 
-Promise.all([
+  const maxTime = Math.max(...times);
+
+  table.innerHTML += `<tr><td>Total</td><td>${maxTime}</td></tr>`;
+}
+const promises = [
   createPromise("Promise 1"),
   createPromise("Promise 2"),
   createPromise("Promise 3"),
-]).then((data) => {
+];
+Promise.all([...promises]).then((data) => {
   table.innerHTML = "";
-  data.forEach(({ label, timeTaken }) => {
-    table.innerHTML += `<tr><td>${label}</td><td>${timeTaken.toFixed(
-      3
-    )}</td></tr>`;
-  });
-  const totalTime = Math.max(...data.map((t) => t.timeTaken));
-  table.innerHTML += `<tr><td>Total</td><td>${totalTime.toFixed(3)}</td></tr>`;
+  const tableRows = [...data].map(
+    ({ promiseName, timeTaken }) =>
+      `<tr><td>${promiseName}</td><td>${timeTaken}</td></tr>`
+  );
+  tableRows.forEach((item) => (table.innerHTML += item));
+  totalTime([...data]);
 });
